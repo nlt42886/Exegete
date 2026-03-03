@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Exegete — Reformed Bible Study</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: Georgia, serif;
+    background: #f8f6f1;
+    color: #2c2416;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* Top bar */
+  #topbar {
+    background: #fff;
+    border-bottom: 1px solid #e0d8cc;
+    padding: 0 16px;
+    height: 52px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-shrink: 0;
+  }
+
+  .app-name {
+    font-family: Georgia, serif;
+    font-size: 1.1rem;
+    font-weight: bold;
+    letter-spacing: 0.12em;
+    color: #5c3d1e;
+    text-transform: uppercase;
+  }
+
+  /* Main content area */
+  #main {
+    flex: 1;
+    overflow-y: auto;
+    padding: 24px 20px;
+  }
+
+  /* Sections */
+  .section { display: none; }
+  .section.active { display: block; }
+
+  .section-title {
+    font-size: 1.5rem;
+    color: #5c3d1e;
+    margin-bottom: 8px;
+    font-family: Georgia, serif;
+  }
+
+  .section-sub {
+    font-size: 0.9rem;
+    color: #7a6a55;
+    margin-bottom: 20px;
+  }
+
+  /* Bottom nav */
+  #bottom-nav {
+    background: #fff;
+    border-top: 1px solid #e0d8cc;
+    display: flex;
+    height: 58px;
+    flex-shrink: 0;
+  }
+
+  .nav-btn {
+    flex: 1;
+    background: none;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 3px;
+    color: #a09078;
+    font-size: 0.65rem;
+    font-family: Georgia, serif;
+    padding: 6px 0;
+  }
+
+  .nav-btn.active {
+    color: #5c3d1e;
+  }
+
+  .nav-btn svg {
+    width: 22px;
+    height: 22px;
+  }
+</style>
+</head>
+<body>
+
+<header id="topbar">
+  <div class="app-name">Exegete</div>
+</header>
+
+<main id="main">
+
+  <div id="sec-bible" class="section active">
+    <div class="section-title">Bible</div>
+    <div class="section-sub">Bible reader coming next step.</div>
+  </div>
+
+  <div id="sec-commentary" class="section">
+    <div class="section-title">Commentary</div>
+    <div class="section-sub">Reformed commentaries coming soon.</div>
+  </div>
+
+  <div id="sec-confessions" class="section">
+    <div class="section-title">Creeds &amp; Confessions</div>
+    <div class="section-sub">Reformed creeds and confessions coming soon.</div>
+  </div>
+
+  <div id="sec-plans" class="section">
+    <div class="section-title">Reading Plans</div>
+    <div class="section-sub">Bible reading plans coming soon.</div>
+  </div>
+
+  <div id="sec-settings" class="section">
+    <div class="section-title">Settings</div>
+    <div class="section-sub">Customize your experience. Coming soon.</div>
+  </div>
+
+</main>
+
+<nav id="bottom-nav">
+
+  <button class="nav-btn active" onclick="show('bible', this)">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+      <path d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
+    </svg>
+    Bible
+  </button>
+
+  <button class="nav-btn" onclick="show('commentary', this)">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+      <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+      <polyline points="14 2 14 8 20 8"/>
+      <line x1="16" y1="13" x2="8" y2="13"/>
+      <line x1="16" y1="17" x2="8" y2="17"/>
+    </svg>
+    Commentary
+  </button>
+
+  <button class="nav-btn" onclick="show('confessions', this)">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+      <rect x="3" y="3" width="18" height="18" rx="2"/>
+      <path d="M3 9h18M9 21V9"/>
+    </svg>
+    Confessions
+  </button>
+
+  <button class="nav-btn" onclick="show('plans', this)">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+      <rect x="3" y="4" width="18" height="18" rx="2"/>
+      <line x1="16" y1="2" x2="16" y2="6"/>
+      <line x1="8" y1="2" x2="8" y2="6"/>
+      <line x1="3" y1="10" x2="21" y2="10"/>
+    </svg>
+    Plans
+  </button>
+
+  <button class="nav-btn" onclick="show('settings', this)">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+      <circle cx="12" cy="12" r="3"/>
+      <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+    </svg>
+    Settings
+  </button>
+
+</nav>
+
+<script>
+function show(name, btn) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('sec-' + name).classList.add('active');
+  btn.classList.add('active');
+}
+</script>
+
+</body>
+</html>
