@@ -14,54 +14,119 @@
     height: 100vh;
     display: flex;
     flex-direction: column;
+    overflow: hidden;
   }
 
-  /* Top bar */
+  /* ── Top bar ── */
   #topbar {
     background: #fff;
     border-bottom: 1px solid #e0d8cc;
-    padding: 0 16px;
     height: 52px;
     display: flex;
     align-items: center;
     justify-content: space-between;
+    padding: 0 12px;
     flex-shrink: 0;
   }
-
   .app-name {
-    font-family: Georgia, serif;
-    font-size: 1.1rem;
+    font-size: 1rem;
     font-weight: bold;
     letter-spacing: 0.12em;
     color: #5c3d1e;
     text-transform: uppercase;
   }
 
-  /* Main content area */
+  /* Bible chapter nav in topbar */
+  #bible-nav {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+  #ch-title-btn {
+    background: none;
+    border: none;
+    font-family: Georgia, serif;
+    font-size: 1rem;
+    color: #2c2416;
+    cursor: pointer;
+    padding: 4px 8px;
+    border-radius: 6px;
+  }
+  #ch-title-btn:active { background: #f0ebe2; }
+  .ch-arrow {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #5c3d1e;
+    font-size: 1.1rem;
+    padding: 6px 8px;
+    border-radius: 6px;
+    line-height: 1;
+  }
+  .ch-arrow:active { background: #f0ebe2; }
+
+  /* ── Main content ── */
   #main {
     flex: 1;
-    overflow-y: auto;
-    padding: 24px 20px;
+    overflow: hidden;
+    position: relative;
   }
 
-  /* Sections */
-  .section { display: none; }
+  /* ── Sections ── */
+  .section {
+    display: none;
+    height: 100%;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
   .section.active { display: block; }
 
-  .section-title {
-    font-size: 1.5rem;
-    color: #5c3d1e;
-    margin-bottom: 8px;
+  /* ── Bible verses ── */
+  #verse-area {
+    padding: 20px 18px 30px;
+    max-width: 680px;
+    margin: 0 auto;
+  }
+  .verse {
+    line-height: 1.85;
+    margin-bottom: 4px;
+    font-size: 1.05rem;
+    color: #2c2416;
+  }
+  .vnum {
+    font-size: 0.65rem;
+    color: #a09078;
+    vertical-align: super;
+    margin-right: 3px;
     font-family: Georgia, serif;
   }
-
-  .section-sub {
+  .loading-msg {
+    text-align: center;
+    color: #a09078;
+    padding: 60px 20px;
+    font-size: 0.95rem;
+  }
+  .error-msg {
+    text-align: center;
+    color: #b04040;
+    padding: 40px 20px;
     font-size: 0.9rem;
-    color: #7a6a55;
-    margin-bottom: 20px;
   }
 
-  /* Bottom nav */
+  /* ── Other section placeholders ── */
+  .placeholder {
+    padding: 32px 20px;
+    text-align: center;
+    color: #7a6a55;
+  }
+  .placeholder h2 {
+    font-size: 1.3rem;
+    color: #5c3d1e;
+    margin-bottom: 8px;
+  }
+  .placeholder p { font-size: 0.9rem; line-height: 1.6; }
+
+  /* ── Bottom nav ── */
   #bottom-nav {
     background: #fff;
     border-top: 1px solid #e0d8cc;
@@ -69,7 +134,6 @@
     height: 58px;
     flex-shrink: 0;
   }
-
   .nav-btn {
     flex: 1;
     background: none;
@@ -81,110 +145,366 @@
     justify-content: center;
     gap: 3px;
     color: #a09078;
-    font-size: 0.65rem;
+    font-size: 0.62rem;
     font-family: Georgia, serif;
     padding: 6px 0;
   }
+  .nav-btn.active { color: #5c3d1e; }
+  .nav-btn svg { width: 22px; height: 22px; }
 
-  .nav-btn.active {
-    color: #5c3d1e;
+  /* ── Book picker modal ── */
+  #book-modal {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.4);
+    z-index: 100;
+    align-items: flex-end;
   }
-
-  .nav-btn svg {
-    width: 22px;
-    height: 22px;
+  #book-modal.open { display: flex; }
+  .modal-sheet {
+    background: #fff;
+    width: 100%;
+    max-height: 80vh;
+    border-radius: 16px 16px 0 0;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+  .modal-handle {
+    width: 40px;
+    height: 4px;
+    background: #e0d8cc;
+    border-radius: 2px;
+    margin: 10px auto 0;
+    flex-shrink: 0;
+  }
+  .modal-header {
+    display: flex;
+    align-items: center;
+    padding: 12px 16px 8px;
+    flex-shrink: 0;
+  }
+  .modal-title {
+    font-size: 1rem;
+    font-weight: bold;
+    color: #5c3d1e;
+    flex: 1;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+  .modal-close {
+    background: none;
+    border: none;
+    font-size: 1.2rem;
+    color: #a09078;
+    cursor: pointer;
+    padding: 4px 8px;
+  }
+  .testament-tabs {
+    display: flex;
+    border-bottom: 1px solid #e0d8cc;
+    padding: 0 16px;
+    flex-shrink: 0;
+  }
+  .t-tab {
+    background: none;
+    border: none;
+    padding: 8px 16px;
+    font-family: Georgia, serif;
+    font-size: 0.85rem;
+    color: #a09078;
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -1px;
+  }
+  .t-tab.active {
+    color: #5c3d1e;
+    border-bottom-color: #5c3d1e;
+  }
+  #book-list {
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    flex: 1;
+    padding: 8px 0 16px;
+  }
+  .book-row {
+    display: flex;
+    align-items: center;
+    padding: 12px 20px;
+    cursor: pointer;
+    border-bottom: 1px solid #f0ebe2;
+  }
+  .book-row:active { background: #f8f6f1; }
+  .book-row.current { background: #f0ebe2; }
+  .book-abbr {
+    font-size: 0.8rem;
+    color: #a09078;
+    width: 44px;
+    flex-shrink: 0;
+  }
+  .book-name-text {
+    flex: 1;
+    font-size: 0.95rem;
+    color: #2c2416;
+  }
+  .book-ch-count {
+    font-size: 0.75rem;
+    color: #c0b098;
   }
 </style>
 </head>
 <body>
 
+<!-- Top bar -->
 <header id="topbar">
   <div class="app-name">Exegete</div>
+  <div id="bible-nav">
+    <button class="ch-arrow" onclick="prevChapter()">&#8249;</button>
+    <button id="ch-title-btn" onclick="openBookModal()">Genesis 1</button>
+    <button class="ch-arrow" onclick="nextChapter()">&#8250;</button>
+  </div>
+  <div style="width:60px"></div><!-- spacer to center nav -->
 </header>
 
+<!-- Main -->
 <main id="main">
 
+  <!-- Bible -->
   <div id="sec-bible" class="section active">
-    <div class="section-title">Bible</div>
-    <div class="section-sub">Bible reader coming next step.</div>
+    <div id="verse-area">
+      <div class="loading-msg">Loading…</div>
+    </div>
   </div>
 
+  <!-- Commentary -->
   <div id="sec-commentary" class="section">
-    <div class="section-title">Commentary</div>
-    <div class="section-sub">Reformed commentaries coming soon.</div>
+    <div class="placeholder">
+      <h2>Commentary</h2>
+      <p>Reformed commentaries — coming in the next step.</p>
+    </div>
   </div>
 
+  <!-- Confessions -->
   <div id="sec-confessions" class="section">
-    <div class="section-title">Creeds &amp; Confessions</div>
-    <div class="section-sub">Reformed creeds and confessions coming soon.</div>
+    <div class="placeholder">
+      <h2>Creeds &amp; Confessions</h2>
+      <p>Coming soon.</p>
+    </div>
   </div>
 
+  <!-- Plans -->
   <div id="sec-plans" class="section">
-    <div class="section-title">Reading Plans</div>
-    <div class="section-sub">Bible reading plans coming soon.</div>
+    <div class="placeholder">
+      <h2>Reading Plans</h2>
+      <p>Coming soon.</p>
+    </div>
   </div>
 
+  <!-- Settings -->
   <div id="sec-settings" class="section">
-    <div class="section-title">Settings</div>
-    <div class="section-sub">Customize your experience. Coming soon.</div>
+    <div class="placeholder">
+      <h2>Settings</h2>
+      <p>Coming soon.</p>
+    </div>
   </div>
 
 </main>
 
+<!-- Bottom nav -->
 <nav id="bottom-nav">
-
-  <button class="nav-btn active" onclick="show('bible', this)">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
-      <path d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
-    </svg>
+  <button class="nav-btn active" onclick="showSection('bible',this)">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
     Bible
   </button>
-
-  <button class="nav-btn" onclick="show('commentary', this)">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
-      <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-      <polyline points="14 2 14 8 20 8"/>
-      <line x1="16" y1="13" x2="8" y2="13"/>
-      <line x1="16" y1="17" x2="8" y2="17"/>
-    </svg>
+  <button class="nav-btn" onclick="showSection('commentary',this)">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
     Commentary
   </button>
-
-  <button class="nav-btn" onclick="show('confessions', this)">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
-      <rect x="3" y="3" width="18" height="18" rx="2"/>
-      <path d="M3 9h18M9 21V9"/>
-    </svg>
+  <button class="nav-btn" onclick="showSection('confessions',this)">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
     Confessions
   </button>
-
-  <button class="nav-btn" onclick="show('plans', this)">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
-      <rect x="3" y="4" width="18" height="18" rx="2"/>
-      <line x1="16" y1="2" x2="16" y2="6"/>
-      <line x1="8" y1="2" x2="8" y2="6"/>
-      <line x1="3" y1="10" x2="21" y2="10"/>
-    </svg>
+  <button class="nav-btn" onclick="showSection('plans',this)">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
     Plans
   </button>
-
-  <button class="nav-btn" onclick="show('settings', this)">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
-      <circle cx="12" cy="12" r="3"/>
-      <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
-    </svg>
+  <button class="nav-btn" onclick="showSection('settings',this)">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
     Settings
   </button>
-
 </nav>
 
+<!-- Book picker modal -->
+<div id="book-modal" onclick="if(event.target===this)closeBookModal()">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div class="modal-header">
+      <span class="modal-title">Choose Book</span>
+      <button class="modal-close" onclick="closeBookModal()">&#x2715;</button>
+    </div>
+    <div class="testament-tabs">
+      <button class="t-tab active" id="tab-ot" onclick="showTestament('OT')">Old Testament</button>
+      <button class="t-tab" id="tab-nt" onclick="showTestament('NT')">New Testament</button>
+    </div>
+    <div id="book-list"></div>
+  </div>
+</div>
+
 <script>
-function show(name, btn) {
+// ── Book data ──────────────────────────────────────
+const BOOKS = [
+  {name:'Genesis',ch:50,id:'GEN',t:'OT'},{name:'Exodus',ch:40,id:'EXO',t:'OT'},
+  {name:'Leviticus',ch:27,id:'LEV',t:'OT'},{name:'Numbers',ch:36,id:'NUM',t:'OT'},
+  {name:'Deuteronomy',ch:34,id:'DEU',t:'OT'},{name:'Joshua',ch:24,id:'JOS',t:'OT'},
+  {name:'Judges',ch:21,id:'JDG',t:'OT'},{name:'Ruth',ch:4,id:'RUT',t:'OT'},
+  {name:'1 Samuel',ch:31,id:'1SA',t:'OT'},{name:'2 Samuel',ch:24,id:'2SA',t:'OT'},
+  {name:'1 Kings',ch:22,id:'1KI',t:'OT'},{name:'2 Kings',ch:25,id:'2KI',t:'OT'},
+  {name:'1 Chronicles',ch:29,id:'1CH',t:'OT'},{name:'2 Chronicles',ch:36,id:'2CH',t:'OT'},
+  {name:'Ezra',ch:10,id:'EZR',t:'OT'},{name:'Nehemiah',ch:13,id:'NEH',t:'OT'},
+  {name:'Esther',ch:10,id:'EST',t:'OT'},{name:'Job',ch:42,id:'JOB',t:'OT'},
+  {name:'Psalms',ch:150,id:'PSA',t:'OT'},{name:'Proverbs',ch:31,id:'PRO',t:'OT'},
+  {name:'Ecclesiastes',ch:12,id:'ECC',t:'OT'},{name:'Song of Solomon',ch:8,id:'SNG',t:'OT'},
+  {name:'Isaiah',ch:66,id:'ISA',t:'OT'},{name:'Jeremiah',ch:52,id:'JER',t:'OT'},
+  {name:'Lamentations',ch:5,id:'LAM',t:'OT'},{name:'Ezekiel',ch:48,id:'EZK',t:'OT'},
+  {name:'Daniel',ch:12,id:'DAN',t:'OT'},{name:'Hosea',ch:14,id:'HOS',t:'OT'},
+  {name:'Joel',ch:3,id:'JOL',t:'OT'},{name:'Amos',ch:9,id:'AMO',t:'OT'},
+  {name:'Obadiah',ch:1,id:'OBA',t:'OT'},{name:'Jonah',ch:4,id:'JON',t:'OT'},
+  {name:'Micah',ch:7,id:'MIC',t:'OT'},{name:'Nahum',ch:3,id:'NAH',t:'OT'},
+  {name:'Habakkuk',ch:3,id:'HAB',t:'OT'},{name:'Zephaniah',ch:3,id:'ZEP',t:'OT'},
+  {name:'Haggai',ch:2,id:'HAG',t:'OT'},{name:'Zechariah',ch:14,id:'ZEC',t:'OT'},
+  {name:'Malachi',ch:4,id:'MAL',t:'OT'},
+  {name:'Matthew',ch:28,id:'MAT',t:'NT'},{name:'Mark',ch:16,id:'MRK',t:'NT'},
+  {name:'Luke',ch:24,id:'LUK',t:'NT'},{name:'John',ch:21,id:'JHN',t:'NT'},
+  {name:'Acts',ch:28,id:'ACT',t:'NT'},{name:'Romans',ch:16,id:'ROM',t:'NT'},
+  {name:'1 Corinthians',ch:16,id:'1CO',t:'NT'},{name:'2 Corinthians',ch:13,id:'2CO',t:'NT'},
+  {name:'Galatians',ch:6,id:'GAL',t:'NT'},{name:'Ephesians',ch:6,id:'EPH',t:'NT'},
+  {name:'Philippians',ch:4,id:'PHP',t:'NT'},{name:'Colossians',ch:4,id:'COL',t:'NT'},
+  {name:'1 Thessalonians',ch:5,id:'1TH',t:'NT'},{name:'2 Thessalonians',ch:3,id:'2TH',t:'NT'},
+  {name:'1 Timothy',ch:6,id:'1TI',t:'NT'},{name:'2 Timothy',ch:4,id:'2TI',t:'NT'},
+  {name:'Titus',ch:3,id:'TIT',t:'NT'},{name:'Philemon',ch:1,id:'PHM',t:'NT'},
+  {name:'Hebrews',ch:13,id:'HEB',t:'NT'},{name:'James',ch:5,id:'JAS',t:'NT'},
+  {name:'1 Peter',ch:5,id:'1PE',t:'NT'},{name:'2 Peter',ch:3,id:'2PE',t:'NT'},
+  {name:'1 John',ch:5,id:'1JN',t:'NT'},{name:'2 John',ch:1,id:'2JN',t:'NT'},
+  {name:'3 John',ch:1,id:'3JN',t:'NT'},{name:'Jude',ch:1,id:'JUD',t:'NT'},
+  {name:'Revelation',ch:22,id:'REV',t:'NT'}
+];
+
+// ── State ──────────────────────────────────────────
+let bookIdx = 0;
+let chapter = 1;
+let testament = 'OT';
+
+// ── Section navigation ─────────────────────────────
+function showSection(name, btn) {
   document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
   document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
   document.getElementById('sec-' + name).classList.add('active');
   btn.classList.add('active');
+  const nav = document.getElementById('bible-nav');
+  nav.style.display = name === 'bible' ? 'flex' : 'none';
 }
+
+// ── Bible loading ──────────────────────────────────
+function getText(node) {
+  if (!node) return '';
+  if (typeof node === 'string') return node;
+  if (Array.isArray(node)) return node.map(getText).join('');
+  if (node.text) return node.text;
+  if (node.content) return getText(node.content);
+  return '';
+}
+
+async function loadChapter() {
+  const book = BOOKS[bookIdx];
+  chapter = Math.max(1, Math.min(chapter, book.ch));
+  document.getElementById('ch-title-btn').textContent = book.name + ' ' + chapter;
+
+  const area = document.getElementById('verse-area');
+  area.innerHTML = '<div class="loading-msg">Loading…</div>';
+  area.scrollTop = 0;
+
+  try {
+    const url = 'https://bible.helloao.org/api/engKJV/' + book.id + '/' + chapter + '.json';
+    const resp = await fetch(url);
+    if (!resp.ok) throw new Error('HTTP ' + resp.status);
+    const data = await resp.json();
+    const verses = data.verses || (data.chapter && data.chapter.verses) || [];
+
+    if (!verses.length) throw new Error('No verses');
+
+    let html = '';
+    verses.forEach((v, i) => {
+      const num = v.number !== undefined ? v.number : (v.verse !== undefined ? v.verse : i + 1);
+      const text = getText(v.content || v.text || '').trim();
+      if (text) html += '<p class="verse"><sup class="vnum">' + num + '</sup> ' + text + '</p>';
+    });
+    area.innerHTML = html;
+  } catch(e) {
+    area.innerHTML = '<div class="error-msg">Could not load scripture. Please check your connection.</div>';
+  }
+}
+
+function prevChapter() {
+  if (chapter > 1) {
+    chapter--;
+  } else if (bookIdx > 0) {
+    bookIdx--;
+    chapter = BOOKS[bookIdx].ch;
+  }
+  loadChapter();
+}
+
+function nextChapter() {
+  const book = BOOKS[bookIdx];
+  if (chapter < book.ch) {
+    chapter++;
+  } else if (bookIdx < BOOKS.length - 1) {
+    bookIdx++;
+    chapter = 1;
+  }
+  loadChapter();
+}
+
+// ── Book picker ────────────────────────────────────
+function openBookModal() {
+  renderBookList(testament);
+  document.getElementById('book-modal').classList.add('open');
+}
+
+function closeBookModal() {
+  document.getElementById('book-modal').classList.remove('open');
+}
+
+function showTestament(t) {
+  testament = t;
+  document.getElementById('tab-ot').classList.toggle('active', t === 'OT');
+  document.getElementById('tab-nt').classList.toggle('active', t === 'NT');
+  renderBookList(t);
+}
+
+function renderBookList(t) {
+  const list = document.getElementById('book-list');
+  const filtered = BOOKS.map((b, i) => ({...b, idx: i})).filter(b => b.t === t);
+  list.innerHTML = filtered.map(b => `
+    <div class="book-row ${b.idx === bookIdx ? 'current' : ''}"
+         onclick="goToBook(${b.idx})">
+      <span class="book-name-text">${b.name}</span>
+      <span class="book-ch-count">${b.ch} ch</span>
+    </div>
+  `).join('');
+}
+
+function goToBook(idx) {
+  bookIdx = idx;
+  chapter = 1;
+  testament = BOOKS[idx].t;
+  closeBookModal();
+  loadChapter();
+}
+
+// ── Init ───────────────────────────────────────────
+loadChapter();
 </script>
 
 </body>
