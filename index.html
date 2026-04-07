@@ -3,509 +3,636 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Exegete — Reformed Bible Study</title>
+<title>Patristic Reading Plan</title>
 <style>
-  * { box-sizing: border-box; margin: 0; padding: 0; }
+  @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=Source+Sans+3:wght@400;600;700&display=swap');
+
+  :root {
+    --parchment: #F5F0E8;
+    --parchment-dark: #EDE6D8;
+    --ink: #2C1810;
+    --ink-light: #5C4033;
+    --accent: #8B1A1A;
+    --accent-light: #B34747;
+    --gold: #C19A3E;
+    --gold-light: #E8D5A3;
+    --teal: #2E6B62;
+    --teal-light: #E0F0ED;
+    --section-apostolic: #8B1A1A;
+    --section-ante: #2E6B62;
+    --section-nicene: #4A3080;
+    --shadow: rgba(44, 24, 16, 0.08);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
 
   body {
-    font-family: Georgia, serif;
-    background: #f8f6f1;
-    color: #2c2416;
-    height: 100vh;
-    display: flex;
-    flex-direction: column;
+    font-family: 'Source Sans 3', sans-serif;
+    background: var(--parchment);
+    color: var(--ink);
+    min-height: 100vh;
+  }
+
+  header {
+    background: linear-gradient(135deg, #2C1810 0%, #4A2C20 50%, #2C1810 100%);
+    color: var(--parchment);
+    padding: 2.5rem 1.5rem 2rem;
+    text-align: center;
+    position: relative;
     overflow: hidden;
   }
 
-  /* ── Top bar ── */
-  #topbar {
-    background: #fff;
-    border-bottom: 1px solid #e0d8cc;
-    height: 52px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 0 12px;
-    flex-shrink: 0;
-  }
-  .app-name {
-    font-size: 1rem;
-    font-weight: bold;
-    letter-spacing: 0.12em;
-    color: #5c3d1e;
-    text-transform: uppercase;
+  header::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 2px,
+      rgba(255,255,255,0.015) 2px,
+      rgba(255,255,255,0.015) 4px
+    );
   }
 
-  /* Bible chapter nav in topbar */
-  #bible-nav {
-    display: flex;
-    align-items: center;
-    gap: 4px;
-  }
-  #ch-title-btn {
-    background: none;
-    border: none;
-    font-family: Georgia, serif;
-    font-size: 1rem;
-    color: #2c2416;
-    cursor: pointer;
-    padding: 4px 8px;
-    border-radius: 6px;
-  }
-  #ch-title-btn:active { background: #f0ebe2; }
-  .ch-arrow {
-    background: none;
-    border: none;
-    cursor: pointer;
-    color: #5c3d1e;
-    font-size: 1.1rem;
-    padding: 6px 8px;
-    border-radius: 6px;
-    line-height: 1;
-  }
-  .ch-arrow:active { background: #f0ebe2; }
-
-  /* ── Main content ── */
-  #main {
-    flex: 1;
-    overflow: hidden;
+  header h1 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 2.6rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
     position: relative;
   }
 
-  /* ── Sections ── */
-  .section {
-    display: none;
-    height: 100%;
-    overflow-y: auto;
-    -webkit-overflow-scrolling: touch;
-  }
-  .section.active { display: block; }
-
-  /* ── Bible verses ── */
-  #verse-area {
-    padding: 20px 18px 30px;
-    max-width: 680px;
-    margin: 0 auto;
-  }
-  .verse {
-    line-height: 1.85;
-    margin-bottom: 4px;
-    font-size: 1.05rem;
-    color: #2c2416;
-  }
-  .vnum {
-    font-size: 0.65rem;
-    color: #a09078;
-    vertical-align: super;
-    margin-right: 3px;
-    font-family: Georgia, serif;
-  }
-  .loading-msg {
-    text-align: center;
-    color: #a09078;
-    padding: 60px 20px;
+  header p {
     font-size: 0.95rem;
-  }
-  .error-msg {
-    text-align: center;
-    color: #b04040;
-    padding: 40px 20px;
-    font-size: 0.9rem;
+    opacity: 0.7;
+    margin-top: 0.5rem;
+    position: relative;
   }
 
-  /* ── Other section placeholders ── */
-  .placeholder {
-    padding: 32px 20px;
-    text-align: center;
-    color: #7a6a55;
-  }
-  .placeholder h2 {
-    font-size: 1.3rem;
-    color: #5c3d1e;
-    margin-bottom: 8px;
-  }
-  .placeholder p { font-size: 0.9rem; line-height: 1.6; }
-
-  /* ── Bottom nav ── */
-  #bottom-nav {
-    background: #fff;
-    border-top: 1px solid #e0d8cc;
+  .controls {
     display: flex;
-    height: 58px;
-    flex-shrink: 0;
-  }
-  .nav-btn {
-    flex: 1;
-    background: none;
-    border: none;
-    cursor: pointer;
-    display: flex;
-    flex-direction: column;
+    gap: 0.5rem;
+    padding: 1rem 1.5rem;
+    background: var(--parchment-dark);
+    border-bottom: 1px solid rgba(44,24,16,0.1);
+    flex-wrap: wrap;
     align-items: center;
-    justify-content: center;
-    gap: 3px;
-    color: #a09078;
-    font-size: 0.62rem;
-    font-family: Georgia, serif;
-    padding: 6px 0;
-  }
-  .nav-btn.active { color: #5c3d1e; }
-  .nav-btn svg { width: 22px; height: 22px; }
-
-  /* ── Book picker modal ── */
-  #book-modal {
-    display: none;
-    position: fixed;
-    inset: 0;
-    background: rgba(0,0,0,0.4);
+    position: sticky;
+    top: 0;
     z-index: 100;
-    align-items: flex-end;
   }
-  #book-modal.open { display: flex; }
-  .modal-sheet {
-    background: #fff;
-    width: 100%;
-    max-height: 80vh;
-    border-radius: 16px 16px 0 0;
+
+  .controls button {
+    font-family: 'Source Sans 3', sans-serif;
+    font-size: 0.8rem;
+    font-weight: 600;
+    padding: 0.4rem 0.9rem;
+    border: 1.5px solid var(--ink-light);
+    border-radius: 4px;
+    background: transparent;
+    color: var(--ink-light);
+    cursor: pointer;
+    transition: all 0.2s;
+    white-space: nowrap;
+  }
+
+  .controls button:hover {
+    background: var(--ink);
+    color: var(--parchment);
+    border-color: var(--ink);
+  }
+
+  .controls button.active {
+    background: var(--ink);
+    color: var(--parchment);
+    border-color: var(--ink);
+  }
+
+  .progress-bar {
+    margin-left: auto;
+    font-size: 0.8rem;
+    color: var(--ink-light);
     display: flex;
-    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .progress-bar .bar {
+    width: 100px;
+    height: 6px;
+    background: rgba(44,24,16,0.1);
+    border-radius: 3px;
     overflow: hidden;
   }
-  .modal-handle {
-    width: 40px;
-    height: 4px;
-    background: #e0d8cc;
-    border-radius: 2px;
-    margin: 10px auto 0;
-    flex-shrink: 0;
+
+  .progress-bar .bar-fill {
+    height: 100%;
+    background: var(--gold);
+    border-radius: 3px;
+    transition: width 0.3s;
   }
-  .modal-header {
+
+  main {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 1.5rem;
+  }
+
+  .section-header {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.5rem;
+    font-weight: 700;
+    padding: 1rem 0 0.5rem;
+    margin-top: 1.5rem;
+    border-bottom: 2px solid;
     display: flex;
-    align-items: center;
-    padding: 12px 16px 8px;
-    flex-shrink: 0;
+    align-items: baseline;
+    gap: 0.75rem;
   }
-  .modal-title {
-    font-size: 1rem;
-    font-weight: bold;
-    color: #5c3d1e;
-    flex: 1;
-    letter-spacing: 0.05em;
-    text-transform: uppercase;
-  }
-  .modal-close {
-    background: none;
-    border: none;
-    font-size: 1.2rem;
-    color: #a09078;
-    cursor: pointer;
-    padding: 4px 8px;
-  }
-  .testament-tabs {
-    display: flex;
-    border-bottom: 1px solid #e0d8cc;
-    padding: 0 16px;
-    flex-shrink: 0;
-  }
-  .t-tab {
-    background: none;
-    border: none;
-    padding: 8px 16px;
-    font-family: Georgia, serif;
-    font-size: 0.85rem;
-    color: #a09078;
-    cursor: pointer;
-    border-bottom: 2px solid transparent;
-    margin-bottom: -1px;
-  }
-  .t-tab.active {
-    color: #5c3d1e;
-    border-bottom-color: #5c3d1e;
-  }
-  #book-list {
-    overflow-y: auto;
-    -webkit-overflow-scrolling: touch;
-    flex: 1;
-    padding: 8px 0 16px;
-  }
-  .book-row {
-    display: flex;
-    align-items: center;
-    padding: 12px 20px;
-    cursor: pointer;
-    border-bottom: 1px solid #f0ebe2;
-  }
-  .book-row:active { background: #f8f6f1; }
-  .book-row.current { background: #f0ebe2; }
-  .book-abbr {
-    font-size: 0.8rem;
-    color: #a09078;
-    width: 44px;
-    flex-shrink: 0;
-  }
-  .book-name-text {
-    flex: 1;
-    font-size: 0.95rem;
-    color: #2c2416;
-  }
-  .book-ch-count {
+
+  .section-header .count {
+    font-family: 'Source Sans 3', sans-serif;
     font-size: 0.75rem;
-    color: #c0b098;
+    font-weight: 600;
+    opacity: 0.5;
   }
+
+  .section-header.apostolic { color: var(--section-apostolic); border-color: var(--section-apostolic); }
+  .section-header.ante-nicene { color: var(--section-ante); border-color: var(--section-ante); }
+  .section-header.nicene { color: var(--section-nicene); border-color: var(--section-nicene); }
+
+  .reading-list {
+    list-style: none;
+    counter-reset: reading;
+  }
+
+  .reading-item {
+    counter-increment: reading;
+    display: flex;
+    align-items: stretch;
+    border-bottom: 1px solid rgba(44,24,16,0.07);
+    transition: background 0.15s;
+    position: relative;
+  }
+
+  .reading-item:hover {
+    background: rgba(44,24,16,0.025);
+  }
+
+  .reading-item .num {
+    width: 48px;
+    min-width: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--ink-light);
+    opacity: 0.4;
+  }
+
+  .reading-item .checkbox {
+    width: 36px;
+    min-width: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+  }
+
+  .reading-item .checkbox input {
+    display: none;
+  }
+
+  .reading-item .checkbox .check-box {
+    width: 18px;
+    height: 18px;
+    border: 1.5px solid rgba(44,24,16,0.25);
+    border-radius: 3px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+  }
+
+  .reading-item .checkbox input:checked + .check-box {
+    background: var(--gold);
+    border-color: var(--gold);
+  }
+
+  .reading-item .checkbox input:checked + .check-box::after {
+    content: '✓';
+    color: white;
+    font-size: 12px;
+    font-weight: bold;
+  }
+
+  .reading-item.completed .title-text {
+    text-decoration: line-through;
+    opacity: 0.45;
+  }
+
+  .reading-item .content {
+    flex: 1;
+    padding: 0.6rem 0.75rem 0.6rem 0;
+    display: flex;
+    align-items: baseline;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+  }
+
+  .title-text {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1rem;
+    font-weight: 400;
+    font-style: italic;
+    color: var(--ink-light);
+    transition: opacity 0.2s;
+  }
+
+  .author-text {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: var(--ink);
+  }
+
+  .arrow-connector {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 0 0 48px;
+    height: 0;
+    overflow: visible;
+    position: relative;
+  }
+
+  .arrow-connector svg {
+    opacity: 0.15;
+  }
+
+  /* View modes */
+  .view-table .reading-list { display: table; width: 100%; }
+  .view-table .reading-item { display: table-row; }
+  .view-table .reading-item > * { display: table-cell; vertical-align: middle; }
+
+  .view-compact .reading-item .content { padding: 0.35rem 0.5rem 0.35rem 0; }
+  .view-compact .title-text { font-size: 0.95rem; }
+
+  /* Stats */
+  .stats-row {
+    display: flex;
+    gap: 1.5rem;
+    padding: 1rem 0;
+    flex-wrap: wrap;
+  }
+
+  .stat {
+    text-align: center;
+  }
+
+  .stat .val {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--gold);
+  }
+
+  .stat .label {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--ink-light);
+    opacity: 0.6;
+  }
+
+  .hidden { display: none !important; }
 </style>
 </head>
 <body>
 
-<!-- Top bar -->
-<header id="topbar">
-  <div class="app-name">Exegete</div>
-  <div id="bible-nav">
-    <button class="ch-arrow" onclick="prevChapter()">&#8249;</button>
-    <button id="ch-title-btn" onclick="openBookModal()">Genesis 1</button>
-    <button class="ch-arrow" onclick="nextChapter()">&#8250;</button>
-  </div>
-  <div style="width:60px"></div><!-- spacer to center nav -->
+<header>
+  <h1>Patristic Reading Plan</h1>
+  <p>A sequential journey through the Church Fathers</p>
 </header>
 
-<!-- Main -->
-<main id="main">
-
-  <!-- Bible -->
-  <div id="sec-bible" class="section active">
-    <div id="verse-area">
-      <div class="loading-msg">Loading…</div>
-    </div>
-  </div>
-
-  <!-- Commentary -->
-  <div id="sec-commentary" class="section">
-    <div class="placeholder">
-      <h2>Commentary</h2>
-      <p>Reformed commentaries — coming in the next step.</p>
-    </div>
-  </div>
-
-  <!-- Confessions -->
-  <div id="sec-confessions" class="section">
-    <div class="placeholder">
-      <h2>Creeds &amp; Confessions</h2>
-      <p>Coming soon.</p>
-    </div>
-  </div>
-
-  <!-- Plans -->
-  <div id="sec-plans" class="section">
-    <div class="placeholder">
-      <h2>Reading Plans</h2>
-      <p>Coming soon.</p>
-    </div>
-  </div>
-
-  <!-- Settings -->
-  <div id="sec-settings" class="section">
-    <div class="placeholder">
-      <h2>Settings</h2>
-      <p>Coming soon.</p>
-    </div>
-  </div>
-
-</main>
-
-<!-- Bottom nav -->
-<nav id="bottom-nav">
-  <button class="nav-btn active" onclick="showSection('bible',this)">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
-    Bible
-  </button>
-  <button class="nav-btn" onclick="showSection('commentary',this)">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
-    Commentary
-  </button>
-  <button class="nav-btn" onclick="showSection('confessions',this)">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
-    Confessions
-  </button>
-  <button class="nav-btn" onclick="showSection('plans',this)">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-    Plans
-  </button>
-  <button class="nav-btn" onclick="showSection('settings',this)">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
-    Settings
-  </button>
-</nav>
-
-<!-- Book picker modal -->
-<div id="book-modal" onclick="if(event.target===this)closeBookModal()">
-  <div class="modal-sheet">
-    <div class="modal-handle"></div>
-    <div class="modal-header">
-      <span class="modal-title">Choose Book</span>
-      <button class="modal-close" onclick="closeBookModal()">&#x2715;</button>
-    </div>
-    <div class="testament-tabs">
-      <button class="t-tab active" id="tab-ot" onclick="showTestament('OT')">Old Testament</button>
-      <button class="t-tab" id="tab-nt" onclick="showTestament('NT')">New Testament</button>
-    </div>
-    <div id="book-list"></div>
+<div class="controls">
+  <button class="active" onclick="setView('default')">List</button>
+  <button onclick="setView('compact')">Compact</button>
+  <button onclick="toggleCompleted()">Hide Completed</button>
+  <div class="progress-bar">
+    <span id="progressText">0 / 0</span>
+    <div class="bar"><div class="bar-fill" id="progressFill" style="width:0%"></div></div>
   </div>
 </div>
 
+<main id="main"></main>
+
 <script>
-// ── Book data ──────────────────────────────────────
-const BOOKS = [
-  {name:'Genesis',ch:50,id:'GEN',t:'OT'},{name:'Exodus',ch:40,id:'EXO',t:'OT'},
-  {name:'Leviticus',ch:27,id:'LEV',t:'OT'},{name:'Numbers',ch:36,id:'NUM',t:'OT'},
-  {name:'Deuteronomy',ch:34,id:'DEU',t:'OT'},{name:'Joshua',ch:24,id:'JOS',t:'OT'},
-  {name:'Judges',ch:21,id:'JDG',t:'OT'},{name:'Ruth',ch:4,id:'RUT',t:'OT'},
-  {name:'1 Samuel',ch:31,id:'1SA',t:'OT'},{name:'2 Samuel',ch:24,id:'2SA',t:'OT'},
-  {name:'1 Kings',ch:22,id:'1KI',t:'OT'},{name:'2 Kings',ch:25,id:'2KI',t:'OT'},
-  {name:'1 Chronicles',ch:29,id:'1CH',t:'OT'},{name:'2 Chronicles',ch:36,id:'2CH',t:'OT'},
-  {name:'Ezra',ch:10,id:'EZR',t:'OT'},{name:'Nehemiah',ch:13,id:'NEH',t:'OT'},
-  {name:'Esther',ch:10,id:'EST',t:'OT'},{name:'Job',ch:42,id:'JOB',t:'OT'},
-  {name:'Psalms',ch:150,id:'PSA',t:'OT'},{name:'Proverbs',ch:31,id:'PRO',t:'OT'},
-  {name:'Ecclesiastes',ch:12,id:'ECC',t:'OT'},{name:'Song of Solomon',ch:8,id:'SNG',t:'OT'},
-  {name:'Isaiah',ch:66,id:'ISA',t:'OT'},{name:'Jeremiah',ch:52,id:'JER',t:'OT'},
-  {name:'Lamentations',ch:5,id:'LAM',t:'OT'},{name:'Ezekiel',ch:48,id:'EZK',t:'OT'},
-  {name:'Daniel',ch:12,id:'DAN',t:'OT'},{name:'Hosea',ch:14,id:'HOS',t:'OT'},
-  {name:'Joel',ch:3,id:'JOL',t:'OT'},{name:'Amos',ch:9,id:'AMO',t:'OT'},
-  {name:'Obadiah',ch:1,id:'OBA',t:'OT'},{name:'Jonah',ch:4,id:'JON',t:'OT'},
-  {name:'Micah',ch:7,id:'MIC',t:'OT'},{name:'Nahum',ch:3,id:'NAH',t:'OT'},
-  {name:'Habakkuk',ch:3,id:'HAB',t:'OT'},{name:'Zephaniah',ch:3,id:'ZEP',t:'OT'},
-  {name:'Haggai',ch:2,id:'HAG',t:'OT'},{name:'Zechariah',ch:14,id:'ZEC',t:'OT'},
-  {name:'Malachi',ch:4,id:'MAL',t:'OT'},
-  {name:'Matthew',ch:28,id:'MAT',t:'NT'},{name:'Mark',ch:16,id:'MRK',t:'NT'},
-  {name:'Luke',ch:24,id:'LUK',t:'NT'},{name:'John',ch:21,id:'JHN',t:'NT'},
-  {name:'Acts',ch:28,id:'ACT',t:'NT'},{name:'Romans',ch:16,id:'ROM',t:'NT'},
-  {name:'1 Corinthians',ch:16,id:'1CO',t:'NT'},{name:'2 Corinthians',ch:13,id:'2CO',t:'NT'},
-  {name:'Galatians',ch:6,id:'GAL',t:'NT'},{name:'Ephesians',ch:6,id:'EPH',t:'NT'},
-  {name:'Philippians',ch:4,id:'PHP',t:'NT'},{name:'Colossians',ch:4,id:'COL',t:'NT'},
-  {name:'1 Thessalonians',ch:5,id:'1TH',t:'NT'},{name:'2 Thessalonians',ch:3,id:'2TH',t:'NT'},
-  {name:'1 Timothy',ch:6,id:'1TI',t:'NT'},{name:'2 Timothy',ch:4,id:'2TI',t:'NT'},
-  {name:'Titus',ch:3,id:'TIT',t:'NT'},{name:'Philemon',ch:1,id:'PHM',t:'NT'},
-  {name:'Hebrews',ch:13,id:'HEB',t:'NT'},{name:'James',ch:5,id:'JAS',t:'NT'},
-  {name:'1 Peter',ch:5,id:'1PE',t:'NT'},{name:'2 Peter',ch:3,id:'2PE',t:'NT'},
-  {name:'1 John',ch:5,id:'1JN',t:'NT'},{name:'2 John',ch:1,id:'2JN',t:'NT'},
-  {name:'3 John',ch:1,id:'3JN',t:'NT'},{name:'Jude',ch:1,id:'JUD',t:'NT'},
-  {name:'Revelation',ch:22,id:'REV',t:'NT'}
+const DATA = [
+  {
+    section: "Apostolic Fathers",
+    cls: "apostolic",
+    works: [
+      ["I Clement", "Clement of Rome"],
+      ["II Clement", "Clement of Rome"],
+      ["The Epistle of Polycarp", "Polycarp"],
+      ["The Martyrdom of Polycarp", ""],
+      ["Ephesians", "Ignatius"],
+      ["Magnesians", "Ignatius"],
+      ["Trallians", "Ignatius"],
+      ["To Polycarp", "Ignatius"],
+      ["Smyrnaeans", "Ignatius"],
+      ["Philadelphians", "Ignatius"],
+      ["Romans", "Ignatius"],
+      ["Fragments", "Quadratus"],
+      ["Fragments", "Papias"],
+      ["The Martyrdom of Ignatius", ""],
+      ["The Didache", ""],
+      ["Epistle of Barnabas", ""],
+      ["Epistle to Diognetus", ""],
+      ["Shepherd of Hermas", "Hermas"],
+      ["The Odes of Solomon", ""],
+      ["Address to the Greeks", "Tatian"],
+      ["Fragments", "Melito"],
+      ["Fragments", "Tatian"],
+      ["On the Passover", "Melito"],
+      ["The Apology", "Aristides"],
+      ["The Diatessaron", "Tatian"],
+    ]
+  },
+  {
+    section: "Ante-Nicene Fathers",
+    cls: "ante-nicene",
+    works: [
+      ["First Apology", "Justin Martyr"],
+      ["Second Apology", "Justin Martyr"],
+      ["On the Resurrection", "Justin Martyr"],
+      ["Dialogue with Trypho", "Justin Martyr"],
+      ["A Plea for the Christians", "Athenagoras"],
+      ["The Resurrection of the Dead", "Athenagoras"],
+      ["Against Heresies", "Irenaeus"],
+      ["The Refutation of All Heresies", "Hippolytus"],
+      ["The Apostolic Tradition", "Hippolytus"],
+      ["The Stromata", "Clement of Alexandria"],
+      ["The Instructor", "Clement of Alexandria"],
+      ["To Autolycus", "Theophilus"],
+      ["Against Marcion", "Tertullian"],
+      ["Against Praxeas", "Tertullian"],
+      ["On the Soul", "Tertullian"],
+      ["On Baptism", "Tertullian"],
+      ["On Modesty", "Tertullian"],
+      ["On the Trinity", "Gregory Thaumaturgus"],
+      ["On the Subject of the Soul", "Gregory Thaumaturgus"],
+      ["A Declaration of Faith", "Gregory Thaumaturgus"],
+      ["Against Celsus", "Origen"],
+      ["De Principiis", "Origen"],
+      ["A Sectional Confession of Faith", "Gregory Thaumaturgus"],
+      ["On the Creation of the World", "Victorinus"],
+      ["Commentary on Revelation", "Victorinus"],
+      ["Treatise 1", "Cyprian"],
+      ["Treatise 4", "Cyprian"],
+      ["Treatise 6", "Cyprian"],
+      ["Treatise 8", "Cyprian"],
+      ["Treatise 12", "Cyprian"],
+      ["Epistle 1", "Cyprian"],
+      ["Epistle 57", "Cyprian"],
+      ["Epistle 62", "Cyprian"],
+      ["Church History", "Eusebius"],
+      ["Epistles", "Alexander"],
+      ["On the Passion", "Methodius"],
+      ["On the Resurrection", "Methodius"],
+      ["Concerning Free Will", "Methodius"],
+      ["The Banquet", "Methodius"],
+      ["Letter on Nicaea I", "Eusebius"],
+      ["The Divine Institutes", "Lactantius"],
+      ["The Phoenix", "Lactantius"],
+      ["A Poem on the Passion of the Lord", "Lactantius"],
+      ["On the Incarnation of the Word", "Athanasius"],
+      ["Statement of Faith", "Athanasius"],
+    ]
+  },
+  {
+    section: "Nicene & Post-Nicene Fathers",
+    cls: "nicene",
+    works: [
+      ["Acts of Nicaea I", ""],
+      ["Catechetical Lectures", "Cyril of Jerusalem"],
+      ["On the Trinity", "Hilary"],
+      ["Letter 9", "Basil"],
+      ["On the Holy Spirit", "Basil"],
+      ["Orations 1, 45", "Gregory Nazianzus"],
+      ["Orations 27–31", "Gregory Nazianzus"],
+      ["Oration 38", "Gregory Nazianzus"],
+      ["Oration 40", "Gregory Nazianzus"],
+      ["Letters on Apollinarianism", "Gregory Nazianzus"],
+      ["On the Soul and Resurrection", "Gregory of Nyssa"],
+      ["The Great Catechism", "Gregory of Nyssa"],
+      ["On 'Not Three Gods'", "Gregory of Nyssa"],
+      ["On the Holy Trinity", "Gregory of Nyssa"],
+      ["Contra Helvidius", "Jerome"],
+      ["Ancoratus", "Epiphanius"],
+      ["On the Christian Faith", "Ambrose"],
+      ["On the Holy Spirit", "Ambrose"],
+      ["On Repentance", "Ambrose"],
+      ["On the Mysteries", "Ambrose"],
+      ["Epistle 53", "Jerome"],
+      ["Against the Pelagians", "Jerome"],
+      ["Conference 14", "John Cassian"],
+      ["Homilies on the Pauline Epistles", "John Chrysostom"],
+      ["Against the Jews", "John Chrysostom"],
+      ["Instructions to Catechumens", "John Chrysostom"],
+      ["The Acts of Constantinople I", ""],
+      ["Against the Academics", "Augustine"],
+      ["On the Happy Life", "Augustine"],
+      ["On Order", "Augustine"],
+      ["Soliloquies", "Augustine"],
+      ["Morals of the Catholic Church", "Augustine"],
+      ["Exposition of the Psalms", "Augustine"],
+      ["Of Two Souls", "Augustine"],
+      ["On the Usefulness of Belief", "Augustine"],
+      ["On True Religion", "Augustine"],
+      ["On Free Will", "Augustine"],
+      ["The Teacher", "Augustine"],
+      ["On Faith and the Creed", "Augustine"],
+      ["Literal Meaning of Genesis", "Augustine"],
+      ["To Simplician", "Augustine"],
+      ["On Lying", "Augustine"],
+      ["On Christian Doctrine", "Augustine"],
+      ["Contra Faustum", "Augustine"],
+      ["Concerning Faith of Things Not Seen", "Augustine"],
+      ["On the Trinity", "Augustine"],
+      ["On the Catechizing of the Uninstructed", "Augustine"],
+      ["The Nature of the Good", "Augustine"],
+      ["Harmony of the Gospels", "Augustine"],
+      ["On the Good of Marriage", "Augustine"],
+      ["Of Holy Virginity", "Augustine"],
+      ["Literary Commentary on Genesis", "Augustine"],
+      ["Answer to Petilian", "Augustine"],
+      ["On the Spirit and the Letter", "Augustine"],
+      ["Infant Baptism", "Augustine"],
+      ["Homilies on I John", "Augustine"],
+      ["Treatises on John", "Augustine"],
+      ["On Baptism", "Augustine"],
+      ["On Seeing God", "Augustine"],
+      ["The City of God", "Augustine"],
+      ["On Nature and Grace", "Augustine"],
+      ["On Patience", "Augustine"],
+      ["On the Proceedings of Pelagius", "Augustine"],
+      ["On Man's Perfection", "Augustine"],
+      ["On Marriage and Concupiscence", "Augustine"],
+      ["On the Soul and Its Origin", "Augustine"],
+      ["On Continence", "Augustine"],
+      ["On Original Sin", "Augustine"],
+      ["Against Lying", "Augustine"],
+      ["Against the Pelagians", "Augustine"],
+      ["Enchiridion", "Augustine"],
+      ["On Grace and Free Will", "Augustine"],
+      ["On the Creed", "Augustine"],
+      ["Contra Julianum", "Augustine"],
+      ["On Perseverance", "Augustine"],
+      ["On Predestination", "Augustine"],
+      ["On Heresies", "Augustine"],
+      ["Retractions", "Augustine"],
+      ["On Rebuke and Grace", "Augustine"],
+      ["Letters 18, 22, 130, 137", "Augustine"],
+      ["On the Sermon on the Mount", "Augustine"],
+      ["Sermons 6–9, 43–44, 67–71, 81–82, 87–89, 94", "Augustine"],
+      ["Acts of the Council of Ephesus", ""],
+      ["The Divine Names", "Pseudo-Dionysius"],
+      ["The Mystical Theology", "Pseudo-Dionysius"],
+      ["Acts of the Council of Chalcedon", ""],
+      ["Commentaries", "Ambrosiaster"],
+      ["Demonstrations", "Theodoret"],
+      ["The Ecclesiastical Hierarchy", "Pseudo-Dionysius"],
+      ["The Celestial Hierarchy", "Pseudo-Dionysius"],
+      ["Commentary on the Lord's Prayer", "Maximus"],
+      ["Questions Addressed to Thalassius", "Maximus"],
+      ["Theology and Polemics", "Maximus"],
+      ["Ambigua I & II", "Maximus"],
+      ["On Charity", "Maximus"],
+      ["Acts of the Council of Constantinople II", ""],
+      ["Letters 10, 28, 40, 156", "Leo the Great"],
+      ["Sermons 21–28, 73–74, 95", "Leo the Great"],
+      ["The Consolation of Philosophy", "Boethius"],
+      ["Theological Tractates", "Boethius"],
+      ["To Peter on the Faith", "Fulgentius"],
+      ["To Monimus", "Fulgentius"],
+      ["The Call of All Nations", "Prosper"],
+      ["Defense of Augustine", "Prosper"],
+      ["Letters V.20, VII.33, XI.13, XIV.16", "Gregory the Great"],
+      ["Etymologies", "Isidore"],
+      ["Acts of the Council of Constantinople III", ""],
+      ["An Exposition of the Orthodox Faith", "John Damascene"],
+      ["Three Treatises on Images", "John Damascene"],
+      ["Acts of the Council of Nicaea II", ""],
+    ]
+  }
 ];
 
-// ── State ──────────────────────────────────────────
-let bookIdx = 0;
-let chapter = 1;
-let testament = 'OT';
+let completedSet = new Set(JSON.parse(localStorage.getItem('patristic_completed') || '[]'));
+let hideCompleted = false;
+let currentView = 'default';
 
-// ── Section navigation ─────────────────────────────
-function showSection(name, btn) {
-  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-  document.getElementById('sec-' + name).classList.add('active');
-  btn.classList.add('active');
-  const nav = document.getElementById('bible-nav');
-  nav.style.display = name === 'bible' ? 'flex' : 'none';
+function save() {
+  localStorage.setItem('patristic_completed', JSON.stringify([...completedSet]));
 }
 
-// ── Bible loading ──────────────────────────────────
-function getText(node) {
-  if (!node) return '';
-  if (typeof node === 'string') return node;
-  if (Array.isArray(node)) return node.map(getText).join('');
-  if (node.text) return node.text;
-  if (node.content) return getText(node.content);
-  return '';
+function getGlobalIndex(sectionIdx, workIdx) {
+  let n = 0;
+  for (let s = 0; s < sectionIdx; s++) n += DATA[s].works.length;
+  return n + workIdx;
 }
 
-async function loadChapter() {
-  const book = BOOKS[bookIdx];
-  chapter = Math.max(1, Math.min(chapter, book.ch));
-  document.getElementById('ch-title-btn').textContent = book.name + ' ' + chapter;
+function totalWorks() {
+  return DATA.reduce((a, s) => a + s.works.length, 0);
+}
 
-  const area = document.getElementById('verse-area');
-  area.innerHTML = '<div class="loading-msg">Loading…</div>';
-  area.scrollTop = 0;
+function updateProgress() {
+  const total = totalWorks();
+  const done = completedSet.size;
+  document.getElementById('progressText').textContent = `${done} / ${total}`;
+  document.getElementById('progressFill').style.width = `${(done/total)*100}%`;
+}
 
-  try {
-    const url = 'https://bible.helloao.org/api/engKJV/' + book.id + '/' + chapter + '.json';
-    const resp = await fetch(url);
-    if (!resp.ok) throw new Error('HTTP ' + resp.status);
-    const data = await resp.json();
-    const verses = data.verses || (data.chapter && data.chapter.verses) || [];
+function toggleCheck(globalIdx) {
+  if (completedSet.has(globalIdx)) completedSet.delete(globalIdx);
+  else completedSet.add(globalIdx);
+  save();
+  render();
+}
 
-    if (!verses.length) throw new Error('No verses');
+function setView(v) {
+  currentView = v;
+  document.querySelectorAll('.controls button').forEach((b,i) => {
+    b.classList.toggle('active', i === (v === 'default' ? 0 : v === 'compact' ? 1 : -1));
+  });
+  render();
+}
 
-    let html = '';
-    verses.forEach((v, i) => {
-      const num = v.number !== undefined ? v.number : (v.verse !== undefined ? v.verse : i + 1);
-      const text = getText(v.content || v.text || '').trim();
-      if (text) html += '<p class="verse"><sup class="vnum">' + num + '</sup> ' + text + '</p>';
+function toggleCompleted() {
+  hideCompleted = !hideCompleted;
+  const btn = document.querySelectorAll('.controls button')[2];
+  btn.classList.toggle('active', hideCompleted);
+  btn.textContent = hideCompleted ? 'Show All' : 'Hide Completed';
+  render();
+}
+
+function render() {
+  const main = document.getElementById('main');
+  let html = '';
+
+  // Stats
+  const total = totalWorks();
+  const authorMap = {};
+  DATA.forEach(s => s.works.forEach(([t, a]) => {
+    const key = a || 'Anonymous/Various';
+    authorMap[key] = (authorMap[key] || 0) + 1;
+  }));
+
+  html += `<div class="stats-row">
+    <div class="stat"><div class="val">${total}</div><div class="label">Total Works</div></div>
+    <div class="stat"><div class="val">${Object.keys(authorMap).length}</div><div class="label">Authors</div></div>
+    <div class="stat"><div class="val">${DATA.length}</div><div class="label">Periods</div></div>
+    <div class="stat"><div class="val">${completedSet.size}</div><div class="label">Completed</div></div>
+  </div>`;
+
+  DATA.forEach((section, si) => {
+    const sectionCompleted = section.works.filter((_, wi) => completedSet.has(getGlobalIndex(si, wi))).length;
+    html += `<div class="section-header ${section.cls}">${section.section} <span class="count">${sectionCompleted}/${section.works.length}</span></div>`;
+    html += `<ol class="reading-list">`;
+
+    section.works.forEach(([title, author], wi) => {
+      const gi = getGlobalIndex(si, wi);
+      const done = completedSet.has(gi);
+      const hiddenCls = (hideCompleted && done) ? ' hidden' : '';
+      const completedCls = done ? ' completed' : '';
+
+      html += `<li class="reading-item${completedCls}${hiddenCls}">
+        <div class="num">${gi + 1}</div>
+        <label class="checkbox">
+          <input type="checkbox" ${done ? 'checked' : ''} onchange="toggleCheck(${gi})">
+          <div class="check-box"></div>
+        </label>
+        <div class="content">
+          ${author ? `<span class="author-text">${author} —</span>` : ''}
+          <span class="title-text">${title}</span>
+        </div>
+      </li>`;
     });
-    area.innerHTML = html;
-  } catch(e) {
-    area.innerHTML = '<div class="error-msg">Could not load scripture. Please check your connection.</div>';
-  }
+
+    html += `</ol>`;
+  });
+
+  main.innerHTML = html;
+  if (currentView === 'compact') main.classList.add('view-compact');
+  else main.classList.remove('view-compact');
+  updateProgress();
 }
 
-function prevChapter() {
-  if (chapter > 1) {
-    chapter--;
-  } else if (bookIdx > 0) {
-    bookIdx--;
-    chapter = BOOKS[bookIdx].ch;
-  }
-  loadChapter();
-}
-
-function nextChapter() {
-  const book = BOOKS[bookIdx];
-  if (chapter < book.ch) {
-    chapter++;
-  } else if (bookIdx < BOOKS.length - 1) {
-    bookIdx++;
-    chapter = 1;
-  }
-  loadChapter();
-}
-
-// ── Book picker ────────────────────────────────────
-function openBookModal() {
-  renderBookList(testament);
-  document.getElementById('book-modal').classList.add('open');
-}
-
-function closeBookModal() {
-  document.getElementById('book-modal').classList.remove('open');
-}
-
-function showTestament(t) {
-  testament = t;
-  document.getElementById('tab-ot').classList.toggle('active', t === 'OT');
-  document.getElementById('tab-nt').classList.toggle('active', t === 'NT');
-  renderBookList(t);
-}
-
-function renderBookList(t) {
-  const list = document.getElementById('book-list');
-  const filtered = BOOKS.map((b, i) => ({...b, idx: i})).filter(b => b.t === t);
-  list.innerHTML = filtered.map(b => `
-    <div class="book-row ${b.idx === bookIdx ? 'current' : ''}"
-         onclick="goToBook(${b.idx})">
-      <span class="book-name-text">${b.name}</span>
-      <span class="book-ch-count">${b.ch} ch</span>
-    </div>
-  `).join('');
-}
-
-function goToBook(idx) {
-  bookIdx = idx;
-  chapter = 1;
-  testament = BOOKS[idx].t;
-  closeBookModal();
-  loadChapter();
-}
-
-// ── Init ───────────────────────────────────────────
-loadChapter();
+render();
 </script>
-
 </body>
 </html>
